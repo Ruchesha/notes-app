@@ -1,0 +1,36 @@
+version: '2'
+
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: notes-mysql
+    volumes:
+      - mysqldata:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: yourpassword
+      MYSQL_DATABASE: notes-app
+    ports:
+      - "3306:3306"
+    networks:
+      - notes-app-twotier
+
+  app:
+    image: notes-app:latest
+    build: .
+    container_name: notes-app-project
+    ports:
+      - "3000:3000"
+    environment:
+      MYSQL_HOST: notes-mysql
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: yourpassword
+      MYSQL_DATABASE: notes-app
+    networks:
+      - notes-app-twotier
+
+volumes:
+  mysqldata:
+
+networks:
+  notes-app-twotier:
+    driver: bridge
